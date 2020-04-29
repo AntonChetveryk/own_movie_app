@@ -1,18 +1,35 @@
 import React from "react";
 import Filters from "./Filters/Filters";
 import MoviesList from "./Movies/MoviesList";
+import { API_URL, API_KEY_3 } from "../api/api";
 
 export default class App extends React.Component {
-  constructor() {
-    super();
+  state = {
+    filters: {
+      sort_by: "popularity.desc",
+      primary_release_year: 2020,
+    },
+    page: 1,
+    movies: [],
+  };
 
-    this.state = {
-      filters: {
-        sort_by: "popularity.desc",
-      },
-      page: 1,
-    };
-  }
+  getMovies = () => {
+    const {
+      filters: { sort_by, primary_release_year },
+      page,
+    } = this.state;
+    const link = `${API_URL}/discover/movie?api_key=${API_KEY_3}&language=ru-RU&sort_by=${sort_by}&page=${page}&primary_release_year=${primary_release_year}`;
+    fetch(link)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        this.setState({
+          movies: data.results,
+          total_pages: data.total_pages,
+        });
+      });
+  };
 
   onChangeFilters = (event) => {
     const { value, name } = event.target;
@@ -31,7 +48,7 @@ export default class App extends React.Component {
   };
 
   render() {
-    const { filters, page } = this.state;
+    const { filters, page, movies } = this.state;
     return (
       <div className="container">
         <div className="row mt-4">
@@ -50,8 +67,10 @@ export default class App extends React.Component {
           </div>
           <div className="col-8">
             <MoviesList
-              filters={filters}
               page={page}
+              getMovies={this.getMovies}
+              filters={filters}
+              movies={movies}
               onChangePage={this.onChangePage}
             />
           </div>

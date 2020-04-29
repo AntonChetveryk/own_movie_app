@@ -1,9 +1,19 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+function getYears(from, to) {
+  let years = [];
+  for (let i = from; i <= to; i++) {
+    years.push(i);
+  }
+  return years;
+}
+
+const years = getYears(1950, 2025);
+
 export default class SortBy extends React.Component {
   static propTypes = {
-    sort_by: PropTypes.string.isRequired,
+    filters: PropTypes.object.isRequired,
     onChangeFilters: PropTypes.func.isRequired,
   };
 
@@ -30,7 +40,11 @@ export default class SortBy extends React.Component {
   };
 
   render() {
-    const { sort_by, onChangeFilters, options } = this.props;
+    const {
+      filters: { sort_by, primary_release_year },
+      onChangeFilters,
+      options,
+    } = this.props;
     return (
       <div className="form-group">
         <label htmlFor="sort_by">Сортировать по:</label>
@@ -44,6 +58,21 @@ export default class SortBy extends React.Component {
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
+            </option>
+          ))}
+        </select>
+
+        <label htmlFor="primary_release_year">Сортировать по году:</label>
+        <select
+          className="form-control"
+          value={primary_release_year}
+          onChange={onChangeFilters}
+          id="primary_release_year"
+          name="primary_release_year"
+        >
+          {years.map((option) => (
+            <option key={option} value={option}>
+              {option}
             </option>
           ))}
         </select>

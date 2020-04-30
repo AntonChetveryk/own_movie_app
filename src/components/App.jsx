@@ -2,6 +2,7 @@ import React from "react";
 import Filters from "./Filters/Filters";
 import MoviesList from "./Movies/MoviesList";
 import { API_URL, API_KEY_3 } from "../api/api";
+import Header from "./Header/Header";
 
 export default class App extends React.Component {
   constructor() {
@@ -81,35 +82,38 @@ export default class App extends React.Component {
   render() {
     const { filters, page, movies, total_pages } = this.state;
     return (
-      <div className="container">
-        <div className="row mt-4">
-          <div className="col-4">
-            <div className="card">
-              <div className="card-body">
-                <h3>Фильтры:</h3>
-                <Filters
-                  page={page}
-                  filters={filters}
-                  total_pages={total_pages}
-                  onChangeFilters={this.onChangeFilters}
-                  onChangePage={this.onChangePage}
-                  onReset={this.onReset}
-                  onChangeGenres={this.onChangeGenres}
-                />
+      <>
+        <Header />
+        <div className="container">
+          <div className="row mt-4">
+            <div className="col-4">
+              <div className="card">
+                <div className="card-body">
+                  <h3>Фильтры:</h3>
+                  <Filters
+                    page={page}
+                    filters={filters}
+                    total_pages={total_pages}
+                    onChangeFilters={this.onChangeFilters}
+                    onChangePage={this.onChangePage}
+                    onReset={this.onReset}
+                    onChangeGenres={this.onChangeGenres}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col-8">
-            <MoviesList
-              page={page}
-              getMovies={this.getMovies}
-              filters={filters}
-              movies={movies}
-              onChangePage={this.onChangePage}
-            />
+            <div className="col-8">
+              <MoviesList
+                page={page}
+                getMovies={this.getMovies}
+                filters={filters}
+                movies={movies}
+                onChangePage={this.onChangePage}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 }

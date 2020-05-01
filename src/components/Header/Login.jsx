@@ -1,63 +1,34 @@
 import React from "react";
-import { API_URL, API_KEY_3 } from "../../api/api";
+import { Modal, ModalBody } from "reactstrap";
 
-// `${API_URL}/authentication/token/new?api_key=${API_KEY_3}`
-// `${API_URL}/authentication/token/validate_with_login?api_key=${API_KEY_3}`
-// `https://api.themoviedb.org/3/authentication/session/new?api_key=${API_KEY_3}`
+import LoginForm from "./LoginForm";
 
 export default class Login extends React.Component {
-  sendPromises = () => {
-    //1
-    fetch(`${API_URL}/authentication/token/new?api_key=${API_KEY_3}`)
-      .then((res) => res.json())
-      .then(({ request_token }) =>
-        //2
-        fetch(
-          `${API_URL}/authentication/token/validate_with_login?api_key=${API_KEY_3}`,
-          {
-            method: "POST",
-            mode: "cors",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              username: "chetverykanton92@gmail.com",
-              password: "anton1031",
-              request_token,
-            }),
-          }
-        )
-          .then((res) => res.json())
-          //3
-          .then(({ request_token }) =>
-            fetch(
-              `https://api.themoviedb.org/3/authentication/session/new?api_key=${API_KEY_3}`,
-              {
-                method: "POST",
-                mode: "cors",
-                headers: {
-                  "Content-type": "application/json",
-                },
-                body: JSON.stringify({
-                  request_token,
-                }),
-              }
-            )
-              .then((res) => res.json())
-              .then((res) => console.log(res.session_id))
-          )
-      );
+  state = {
+    showModal: false,
   };
+
+  toggleModal = () => {
+    this.setState((state) => {
+      return { showModal: !state.showModal };
+    });
+  };
+
   render() {
     return (
       <div>
         <button
           className="btn btn-success"
           type="button"
-          onClick={this.sendPromises}
+          onClick={this.toggleModal}
         >
           Login
         </button>
+        <Modal isOpen={this.state.showModal} toggle={this.toggleModal}>
+          <ModalBody>
+            <LoginForm />
+          </ModalBody>
+        </Modal>
       </div>
     );
   }

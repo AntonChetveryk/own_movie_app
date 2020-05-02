@@ -1,6 +1,7 @@
 import React from "react";
 import { API_URL, API_KEY_3 } from "../../api/api";
 import { fetchApi } from "../../api/api";
+import classNames from "classnames";
 
 const tokenApi = `${API_URL}/authentication/token/new?api_key=${API_KEY_3}`;
 const tokenWithLoginApi = `${API_URL}/authentication/token/validate_with_login?api_key=${API_KEY_3}`;
@@ -10,6 +11,7 @@ export default class LoginForm extends React.Component {
   state = {
     username: "",
     password: "",
+    repeatPassword: "",
     errors: {},
     submitting: false,
   };
@@ -27,13 +29,15 @@ export default class LoginForm extends React.Component {
     }));
   };
 
-  handleBlur = () => {
+  handleBlur = (e) => {
+    console.log(e.target.name);
+    const { name } = e.target;
     const errors = this.validateFields();
     if (Object.keys(errors).length > 0) {
       this.setState((prevState) => ({
         errors: {
           ...prevState.errors,
-          ...errors,
+          [name]: errors[name],
         },
       }));
     }
@@ -43,7 +47,15 @@ export default class LoginForm extends React.Component {
     const errors = {};
 
     if (this.state.username === "") {
-      errors.username = "Requaire";
+      errors.username = "Обязательно";
+    }
+
+    if (this.state.password === "") {
+      errors.password = "Обязательно";
+    }
+
+    if (this.state.repeatPassword !== this.state.password) {
+      errors.repeatPassword = "Должен быть равен паролю";
     }
 
     return errors;
@@ -51,17 +63,15 @@ export default class LoginForm extends React.Component {
 
   onSubmit = () => {
     const { username, password } = this.state;
-    const getRequestToken = () => fetchApi(tokenApi);
-    const validateWithLogin = (body) => fetchApi(tokenWithLoginApi, body);
 
     //1
     this.setState({
       submitting: true,
     });
-    getRequestToken()
+    fetchApi(tokenApi)
       .then(({ request_token }) => {
         //2
-        return validateWithLogin({
+        return fetchApi(tokenWithLoginApi, {
           method: "POST",
           mode: "cors",
           headers: {
@@ -83,18 +93,23 @@ export default class LoginForm extends React.Component {
             "Content-type": "application/json",
           },
           body: JSON.stringify({
-            username: "chetverykanton92@gmail.com",
-            password: "anton1031",
             request_token,
           }),
         });
       })
-      .then((res) => {
-        console.log(res);
+      .then(({ session_id }) => {
+        this.props.updateSessionId(session_id);
+        return fetchApi(
+          `${API_URL}/account?api_key=${API_KEY_3}&session_id=${session_id}`
+        );
+      })
+      .then((user) => {
+        this.props.updateUser(user);
         this.setState({
           submitting: false,
         });
       })
+
       .catch((error) =>
         this.setState({
           submitting: false,
@@ -121,7 +136,13 @@ export default class LoginForm extends React.Component {
   };
 
   render() {
-    const { username, password, errors, submitting } = this.state;
+    const {
+      username,
+      password,
+      errors,
+      submitting,
+      repeatPassword,
+    } = this.state;
     return (
       <div className="form-login-container">
         <form className="form-login">
@@ -132,7 +153,9 @@ export default class LoginForm extends React.Component {
             <label htmlFor="username">Пользователь</label>
             <input
               type="text"
-              className="form-control"
+              className={classNames("form-control", {
+                "border-red": errors.username,
+              })}
               id="username"
               placeholder="Пользователь"
               name="username"
@@ -148,15 +171,36 @@ export default class LoginForm extends React.Component {
             <label htmlFor="password">Пароль</label>
             <input
               type="password"
-              className="form-control"
+              className={classNames("form-control", {
+                "border-red": errors.password,
+              })}
               id="password"
               placeholder="Пароль"
               name="password"
               value={password}
               onChange={this.onChange}
+              onBlur={this.handleBlur}
             />
             {errors.password && (
               <div className="invalid-feedback">{errors.password}</div>
+            )}
+          </div>
+          <div className="form-group">
+            <label htmlFor="repeatPassword">Повторите пароль</label>
+            <input
+              type="password"
+              className={classNames("form-control", {
+                "border-red": errors.repeatPassword,
+              })}
+              id="repeatPassword"
+              placeholder="Повторите пароль"
+              name="repeatPassword"
+              value={repeatPassword}
+              onChange={this.onChange}
+              onBlur={this.handleBlur}
+            />
+            {errors.repeatPassword && (
+              <div className="invalid-feedback">{errors.repeatPassword}</div>
             )}
           </div>
           <button

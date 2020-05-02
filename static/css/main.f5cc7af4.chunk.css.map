@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.css"],"names":[],"mappings":"AAAA,KACE,kBACF,CAEA,kBACE,aACF,CAEA,YACE,oBACF","file":"main.f5cc7af4.chunk.css","sourcesContent":["body {\r\n  background: #fdfdfd;\r\n}\r\n\r\n.invalid-feedback {\r\n  display: block;\r\n}\r\n\r\n.border-red {\r\n  border: 1px solid red;\r\n}\r\n"]}

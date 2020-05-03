@@ -3,7 +3,7 @@ import SortBy from "./SortBy";
 import Pagination from "./Pagination";
 import Genres from "./Genres";
 
-export default class Filters extends React.Component {
+export default class Filters extends React.PureComponent {
   render() {
     const {
       filters,

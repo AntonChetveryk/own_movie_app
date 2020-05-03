@@ -30,7 +30,6 @@ export default class LoginForm extends React.Component {
   };
 
   handleBlur = (e) => {
-    console.log(e.target.name);
     const { name } = e.target;
     const errors = this.validateFields();
     if (Object.keys(errors).length > 0) {
@@ -104,10 +103,12 @@ export default class LoginForm extends React.Component {
         );
       })
       .then((user) => {
-        this.props.updateUser(user);
-        this.setState({
-          submitting: false,
-        });
+        this.setState(
+          {
+            submitting: false,
+          },
+          () => this.props.updateUser(user)
+        );
       })
 
       .catch((error) =>

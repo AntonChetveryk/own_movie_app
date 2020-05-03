@@ -1,36 +1,25 @@
-import React, { Component } from "react";
+import React from "react";
 import MovieItem from "./MovieItem";
+import PropTypes from "prop-types";
 
-export default class MovieList extends Component {
-  componentDidMount() {
-    this.props.getMovies();
-  }
+const MoviesList = ({ movies }) => (
+  <div className="row">
+    {movies.map((movie) => {
+      return (
+        <div key={movie.id} className="col-6 mb-4">
+          <MovieItem movie={movie} />
+        </div>
+      );
+    })}
+  </div>
+);
 
-  componentDidUpdate(prevProps) {
-    const { filters, onChangePage, getMovies, page } = this.props;
-    if (filters !== prevProps.filters) {
-      onChangePage(1);
-      getMovies();
-    }
+MoviesList.defaultProps = {
+  movies: [],
+};
 
-    if (page !== prevProps.page) {
-      getMovies();
-    }
-  }
+MoviesList.propTypes = {
+  movies: PropTypes.array.isRequired,
+};
 
-  render() {
-    const { movies } = this.props;
-
-    return (
-      <div className="row">
-        {movies.map((movie) => {
-          return (
-            <div key={movie.id} className="col-6 mb-4">
-              <MovieItem movie={movie} />
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-}
+export default MoviesList;

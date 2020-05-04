@@ -20,9 +20,25 @@ export default class App extends React.Component {
       },
       page: 1,
       movies: [],
+      favorits: [],
+      watchlist: [],
     };
     this.state = this.initialState;
   }
+
+  getFavorits = (user) => {
+    const { session_id } = this.state;
+    fetchApi(
+      `${API_URL}/account/${user.id}/favorite/movies?api_key=${API_KEY_3}&session_id=${session_id}&language=ru-RU`
+    ).then((data) => this.setState({ favorits: data.results }));
+  };
+
+  getWatchlist = (user) => {
+    const { session_id } = this.state;
+    fetchApi(
+      `${API_URL}/account/${user.id}/watchlist/movies?api_key=${API_KEY_3}&session_id=${session_id}&language=ru-RU`
+    ).then((data) => this.setState({ watchlist: data.results }));
+  };
 
   updateUser = (user) => {
     this.setState({
@@ -37,6 +53,14 @@ export default class App extends React.Component {
     });
     this.setState({
       session_id,
+    });
+  };
+
+  onLogOut = () => {
+    cookies.remove("session_id");
+    this.setState({
+      session_id: null,
+      user: null,
     });
   };
 
@@ -107,16 +131,30 @@ export default class App extends React.Component {
         `${API_URL}/account?api_key=${API_KEY_3}&session_id=${session_id}`
       ).then((user) => {
         this.updateUser(user);
+        this.updateSessionId(session_id);
+        this.getFavorits(user);
+        this.getWatchlist(user);
       });
     }
   }
 
   render() {
-    const { filters, page, movies, total_pages, user } = this.state;
+    const {
+      filters,
+      page,
+      movies,
+      total_pages,
+      user,
+      session_id,
+      favorits,
+      watchlist,
+    } = this.state;
     return (
       <>
         <Header
           user={user}
+          session_id={session_id}
+          onLogOut={this.onLogOut}
           updateUser={this.updateUser}
           updateSessionId={this.updateSessionId}
         />
@@ -141,10 +179,13 @@ export default class App extends React.Component {
             <div className="col-8">
               <MoviesContainer
                 page={page}
-                getMovies={this.getMovies}
+                favorits={favorits}
+                watchlist={watchlist}
                 filters={filters}
                 movies={movies}
+                session_id={session_id}
                 onChangePage={this.onChangePage}
+                getMovies={this.getMovies}
               />
             </div>
           </div>

@@ -19,7 +19,14 @@ export default class MoviesContainer extends Component {
   }
 
   render() {
-    const { movies } = this.props;
-    return <MoviesList movies={movies} />;
+    const { movies, session_id, favorits, watchlist } = this.props;
+    return (
+      <MoviesList
+        movies={movies}
+        session_id={session_id}
+        favorits={favorits}
+        watchlist={watchlist}
+      />
+    );
   }
 }

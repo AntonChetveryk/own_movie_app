@@ -6,6 +6,7 @@ import { fetchApi, API_KEY_3, API_URL } from "../../api/api";
 export default class MovieItem extends React.Component {
   isFavorite = () => {
     const { favorits, movie } = this.props;
+
     return favorits.findIndex((item) => item.id === movie.id) !== -1;
   };
 
@@ -15,7 +16,7 @@ export default class MovieItem extends React.Component {
       session_id,
     } = this.props;
 
-    const favoriteApi = `${API_URL}/account/8879790/favorite?api_key=${API_KEY_3}&session_id=${session_id}`;
+    const favoriteApi = `${API_URL}/account/${user.id}}/favorite?api_key=${API_KEY_3}&session_id=${session_id}`;
     fetchApi(favoriteApi, {
       method: "POST",
       mode: "cors",
@@ -25,7 +26,7 @@ export default class MovieItem extends React.Component {
       body: JSON.stringify({
         media_type: "movie",
         media_id: id,
-        favorite: !this.isFavorite,
+        favorite: !this.isFavorite(),
       }),
     }).then((res) => console.log(res));
   };

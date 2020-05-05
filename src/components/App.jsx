@@ -178,6 +178,7 @@ export default class App extends React.Component {
             </div>
             <div className="col-8">
               <MoviesContainer
+                user={user}
                 page={page}
                 favorits={favorits}
                 watchlist={watchlist}

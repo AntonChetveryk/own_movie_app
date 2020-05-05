@@ -14,6 +14,7 @@ export default class MovieItem extends React.Component {
     const {
       movie: { id },
       session_id,
+      user,
     } = this.props;
 
     const favoriteApi = `${API_URL}/account/${user.id}}/favorite?api_key=${API_KEY_3}&session_id=${session_id}`;

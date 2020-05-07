@@ -19,15 +19,34 @@ export default class MoviesContainer extends Component {
   }
 
   render() {
-    const { movies, session_id, favorits, watchlist, user } = this.props;
+    const {
+      movies,
+      session_id,
+      favorits,
+      watchlist,
+      user,
+      getFavorits,
+      getWatchlist,
+      toggleModal,
+      isLoading,
+    } = this.props;
     return (
-      <MoviesList
-        movies={movies}
-        user={user}
-        session_id={session_id}
-        favorits={favorits}
-        watchlist={watchlist}
-      />
+      <>
+        {isLoading ? (
+          "Loading..."
+        ) : (
+          <MoviesList
+            movies={movies}
+            user={user}
+            session_id={session_id}
+            favorits={favorits}
+            watchlist={watchlist}
+            getFavorits={getFavorits}
+            getWatchlist={getWatchlist}
+            toggleModal={toggleModal}
+          />
+        )}
+      </>
     );
   }
 }

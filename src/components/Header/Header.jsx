@@ -10,6 +10,8 @@ class Header extends React.Component {
       updateSessionId,
       onLogOut,
       session_id,
+      showModal,
+      toggleModal,
     } = this.props;
 
     return (
@@ -25,7 +27,12 @@ class Header extends React.Component {
           {user ? (
             <UserMenu user={user} session_id={session_id} onLogOut={onLogOut} />
           ) : (
-            <Login updateUser={updateUser} updateSessionId={updateSessionId} />
+            <Login
+              updateUser={updateUser}
+              updateSessionId={updateSessionId}
+              showModal={showModal}
+              toggleModal={toggleModal}
+            />
           )}
         </div>
       </nav>

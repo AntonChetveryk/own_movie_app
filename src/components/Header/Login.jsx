@@ -4,29 +4,15 @@ import { Modal, ModalBody } from "reactstrap";
 import LoginForm from "./LoginForm";
 
 export default class Login extends React.Component {
-  state = {
-    showModal: false,
-  };
-
-  toggleModal = () => {
-    this.setState((state) => {
-      return { showModal: !state.showModal };
-    });
-  };
-
   render() {
-    const { updateUser, updateSessionId } = this.props;
+    const { updateUser, updateSessionId, showModal, toggleModal } = this.props;
 
     return (
       <div>
-        <button
-          className="btn btn-success"
-          type="button"
-          onClick={this.toggleModal}
-        >
+        <button className="btn btn-success" type="button" onClick={toggleModal}>
           Login
         </button>
-        <Modal isOpen={this.state.showModal} toggle={this.toggleModal}>
+        <Modal isOpen={showModal} toggle={toggleModal}>
           <ModalBody>
             <LoginForm
               updateUser={updateUser}

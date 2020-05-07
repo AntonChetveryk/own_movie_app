@@ -13,6 +13,8 @@ export default class App extends React.Component {
     this.initialState = {
       user: null,
       session_id: null,
+      showModal: false,
+      isLoading: false,
       filters: {
         sort_by: "popularity.desc",
         primary_release_year: 2020,
@@ -61,6 +63,8 @@ export default class App extends React.Component {
     this.setState({
       session_id: null,
       user: null,
+      favorits: [],
+      watchlist: [],
     });
   };
 
@@ -73,6 +77,7 @@ export default class App extends React.Component {
       ","
     )}`;
 
+    this.setState({ isLoading: true });
     fetch(link)
       .then((response) => {
         return response.json();
@@ -81,6 +86,7 @@ export default class App extends React.Component {
         this.setState({
           movies: data.results,
           total_pages: data.total_pages,
+          isLoading: false,
         });
       });
   };
@@ -120,8 +126,13 @@ export default class App extends React.Component {
 
   onReset = (event) => {
     event.preventDefault();
-    this.setState(this.initialState);
-    this.getMovies();
+    this.setState({ filters: this.initialState.filters });
+  };
+
+  toggleModal = () => {
+    this.setState((state) => {
+      return { showModal: !state.showModal };
+    });
   };
 
   componentDidMount() {
@@ -138,6 +149,15 @@ export default class App extends React.Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.session_id) {
+      if (this.state.user !== prevState.user) {
+        this.getFavorits(this.state.user);
+        this.getWatchlist(this.state.user);
+      }
+    }
+  }
+
   render() {
     const {
       filters,
@@ -148,15 +168,19 @@ export default class App extends React.Component {
       session_id,
       favorits,
       watchlist,
+      showModal,
+      isLoading,
     } = this.state;
     return (
       <>
         <Header
           user={user}
           session_id={session_id}
+          showModal={showModal}
           onLogOut={this.onLogOut}
           updateUser={this.updateUser}
           updateSessionId={this.updateSessionId}
+          toggleModal={this.toggleModal}
         />
         <div className="container">
           <div className="row mt-4">
@@ -185,8 +209,12 @@ export default class App extends React.Component {
                 filters={filters}
                 movies={movies}
                 session_id={session_id}
+                isLoading={isLoading}
                 onChangePage={this.onChangePage}
                 getMovies={this.getMovies}
+                getFavorits={this.getFavorits}
+                getWatchlist={this.getWatchlist}
+                toggleModal={this.toggleModal}
               />
             </div>
           </div>

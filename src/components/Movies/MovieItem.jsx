@@ -1,40 +1,20 @@
 import React from "react";
-import Star from "@material-ui/icons/Star";
-import StarBorder from "@material-ui/icons/StarBorder";
-import { fetchApi, API_KEY_3, API_URL } from "../../api/api";
+import Favorit from "./Favorit";
+import Watchlist from "./Watchlist";
 
 export default class MovieItem extends React.Component {
-  isFavorite = () => {
-    const { favorits, movie } = this.props;
-
-    return favorits.findIndex((item) => item.id === movie.id) !== -1;
-  };
-
-  onClick = () => {
+  render() {
     const {
-      movie: { id },
-      session_id,
+      movie,
+      favorits,
+      watchlist,
       user,
+      session_id,
+      getFavorits,
+      getWatchlist,
+      toggleModal,
     } = this.props;
 
-    const favoriteApi = `${API_URL}/account/${user.id}}/favorite?api_key=${API_KEY_3}&session_id=${session_id}`;
-
-    fetchApi(favoriteApi, {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        media_type: "movie",
-        media_id: id,
-        favorite: !this.isFavorite(),
-      }),
-    }).then((res) => console.log(res));
-  };
-
-  render() {
-    const { movie } = this.props;
     return (
       <div className="card">
         <img
@@ -51,11 +31,22 @@ export default class MovieItem extends React.Component {
         <div className="card-body">
           <h6 className="card-title">{movie.title}</h6>
           <div className="card-text">Рейтинг: {movie.vote_average}</div>
-          {this.isFavorite() ? (
-            <Star onClick={this.onClick} />
-          ) : (
-            <StarBorder onClick={this.onClick} />
-          )}
+          <Favorit
+            movie={movie}
+            favorits={favorits}
+            user={user}
+            session_id={session_id}
+            getFavorits={getFavorits}
+            toggleModal={toggleModal}
+          />
+          <Watchlist
+            movie={movie}
+            watchlist={watchlist}
+            user={user}
+            session_id={session_id}
+            getWatchlist={getWatchlist}
+            toggleModal={toggleModal}
+          />
         </div>
       </div>
     );

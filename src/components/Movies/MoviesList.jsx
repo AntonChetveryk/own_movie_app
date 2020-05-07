@@ -2,7 +2,16 @@ import React from "react";
 import MovieItem from "./MovieItem";
 import PropTypes from "prop-types";
 
-const MoviesList = ({ movies, session_id, favorits, watchlist, user }) => (
+const MoviesList = ({
+  movies,
+  session_id,
+  favorits,
+  watchlist,
+  user,
+  getFavorits,
+  getWatchlist,
+  toggleModal,
+}) => (
   <div className="row">
     {movies.map((movie) => {
       return (
@@ -13,6 +22,9 @@ const MoviesList = ({ movies, session_id, favorits, watchlist, user }) => (
             session_id={session_id}
             favorits={favorits}
             watchlist={watchlist}
+            getFavorits={getFavorits}
+            getWatchlist={getWatchlist}
+            toggleModal={toggleModal}
           />
         </div>
       );

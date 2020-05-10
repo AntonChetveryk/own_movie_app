@@ -62,7 +62,7 @@ export default class LoginForm extends React.Component {
 
   onSubmit = () => {
     const { username, password } = this.state;
-
+    //let session_id = null;
     //1
     this.setState({
       submitting: true,

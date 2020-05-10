@@ -4,10 +4,11 @@ import MoviesContainer from "./Movies/MoviesContainer";
 import { API_URL, API_KEY_3, fetchApi } from "../api/api";
 import Header from "./Header/Header";
 import Cookies from "universal-cookie";
+import { connect } from "react-redux";
 
 const cookies = new Cookies();
 
-export default class App extends React.Component {
+class App extends React.Component {
   constructor() {
     super();
     this.initialState = {
@@ -171,6 +172,7 @@ export default class App extends React.Component {
       showModal,
       isLoading,
     } = this.state;
+
     return (
       <>
         <Header
@@ -223,3 +225,13 @@ export default class App extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.authReducer.user,
+    session_id: state.authReducer.session_id,
+  };
+};
+const mapDispatchToProps = {};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

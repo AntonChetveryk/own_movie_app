@@ -2,12 +2,13 @@ import React from "react";
 import { API_URL, API_KEY_3 } from "../../api/api";
 import { fetchApi } from "../../api/api";
 import classNames from "classnames";
+import { connect } from "react-redux";
+import { updateAuth } from "../../redux/actions/authActions";
 
 const tokenApi = `${API_URL}/authentication/token/new?api_key=${API_KEY_3}`;
 const tokenWithLoginApi = `${API_URL}/authentication/token/validate_with_login?api_key=${API_KEY_3}`;
 const sessionIdApi = `https://api.themoviedb.org/3/authentication/session/new?api_key=${API_KEY_3}`;
-
-export default class LoginForm extends React.Component {
+class LoginForm extends React.Component {
   state = {
     username: "",
     password: "",
@@ -62,7 +63,7 @@ export default class LoginForm extends React.Component {
 
   onSubmit = () => {
     const { username, password } = this.state;
-    //let session_id = null;
+    let session_id = null;
     //1
     this.setState({
       submitting: true,
@@ -96,8 +97,8 @@ export default class LoginForm extends React.Component {
           }),
         });
       })
-      .then(({ session_id }) => {
-        this.props.updateSessionId(session_id);
+      .then((res) => {
+        session_id = res.session_id;
         return fetchApi(
           `${API_URL}/account?api_key=${API_KEY_3}&session_id=${session_id}`
         );
@@ -107,7 +108,7 @@ export default class LoginForm extends React.Component {
           {
             submitting: false,
           },
-          () => this.props.updateUser(user)
+          () => this.props.updateAuth({ session_id, user })
         );
       })
 
@@ -220,3 +221,14 @@ export default class LoginForm extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.authReducer.user,
+    session_id: state.authReducer.session_id,
+  };
+};
+
+const mapDispatchToProps = { updateAuth };
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);

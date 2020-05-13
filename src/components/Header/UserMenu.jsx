@@ -6,6 +6,8 @@ import {
   DropdownItem,
 } from "reactstrap";
 import { fetchApi, API_URL, API_KEY_3 } from "../../api/api";
+import { onLogOut } from "../../redux/actions/authActions";
+import { connect } from "react-redux";
 
 class UserMenu extends Component {
   state = {
@@ -59,4 +61,13 @@ class UserMenu extends Component {
   }
 }
 
-export default UserMenu;
+const mapStateToProps = (state) => {
+  return {
+    user: state.authReducer.user,
+    session_id: state.authReducer.session_id,
+  };
+};
+
+const mapDispatchToProps = { onLogOut };
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserMenu);

@@ -5,6 +5,7 @@ const cookies = new Cookies();
 const initialState = {
   user: null,
   session_id: cookies.get("session_id"),
+  showModal: false,
 };
 
 export const authReducer = (state = initialState, action) => {
@@ -21,8 +22,19 @@ export const authReducer = (state = initialState, action) => {
         user: action.payload.user,
       };
     }
-    case "UPDATE_SESSION_ID": {
-      return {};
+    case "LOG_OUT": {
+      cookies.remove("session_id");
+      return {
+        ...state,
+        session_id: null,
+        user: null,
+      };
+    }
+    case "TOGGLE_MODAL": {
+      return {
+        ...state,
+        showModal: !state.showModal,
+      };
     }
     default:
       return state;

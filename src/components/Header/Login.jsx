@@ -1,11 +1,12 @@
 import React from "react";
 import { Modal, ModalBody } from "reactstrap";
-
+import { toggleModal } from "../../redux/actions/authActions";
+import { connect } from "react-redux";
 import LoginForm from "./LoginForm";
 
-export default class Login extends React.Component {
+class Login extends React.Component {
   render() {
-    const { updateUser, updateSessionId, showModal, toggleModal } = this.props;
+    const { toggleModal, showModal } = this.props;
 
     return (
       <div>
@@ -14,13 +15,20 @@ export default class Login extends React.Component {
         </button>
         <Modal isOpen={showModal} toggle={toggleModal}>
           <ModalBody>
-            <LoginForm
-              updateUser={updateUser}
-              updateSessionId={updateSessionId}
-            />
+            <LoginForm />
           </ModalBody>
         </Modal>
       </div>
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    showModal: state.authReducer.showModal,
+  };
+};
+
+const mapDispatchToProps = { toggleModal };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

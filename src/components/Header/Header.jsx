@@ -1,19 +1,10 @@
 import React from "react";
 import Login from "./Login";
 import UserMenu from "./UserMenu";
+import { connect } from "react-redux";
 
 class Header extends React.Component {
   render() {
-    const {
-      user,
-      updateUser,
-      updateSessionId,
-      onLogOut,
-      session_id,
-      showModal,
-      toggleModal,
-    } = this.props;
-
     return (
       <nav className="navbar navbar-dark bg-primary">
         <div className="container">
@@ -24,20 +15,17 @@ class Header extends React.Component {
               </a>
             </li>
           </ul>
-          {user ? (
-            <UserMenu user={user} session_id={session_id} onLogOut={onLogOut} />
-          ) : (
-            <Login
-              updateUser={updateUser}
-              updateSessionId={updateSessionId}
-              showModal={showModal}
-              toggleModal={toggleModal}
-            />
-          )}
+          {this.props.user ? <UserMenu /> : <Login />}
         </div>
       </nav>
     );
   }
 }
 
-export default Header;
+const mapStateToProps = (state) => {
+  return {
+    user: state.authReducer.user,
+  };
+};
+
+export default connect(mapStateToProps)(Header);

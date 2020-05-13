@@ -5,6 +5,7 @@ import { API_URL, API_KEY_3, fetchApi } from "../api/api";
 import Header from "./Header/Header";
 import Cookies from "universal-cookie";
 import { connect } from "react-redux";
+import { updateAuth } from "../redux/actions/authActions";
 
 const cookies = new Cookies();
 
@@ -12,9 +13,6 @@ class App extends React.Component {
   constructor() {
     super();
     this.initialState = {
-      user: null,
-      session_id: null,
-      showModal: false,
       isLoading: false,
       filters: {
         sort_by: "popularity.desc",
@@ -30,43 +28,17 @@ class App extends React.Component {
   }
 
   getFavorits = (user) => {
-    const { session_id } = this.state;
+    const { session_id } = this.props;
     fetchApi(
       `${API_URL}/account/${user.id}/favorite/movies?api_key=${API_KEY_3}&session_id=${session_id}&language=ru-RU`
     ).then((data) => this.setState({ favorits: data.results }));
   };
 
   getWatchlist = (user) => {
-    const { session_id } = this.state;
+    const { session_id } = this.props;
     fetchApi(
       `${API_URL}/account/${user.id}/watchlist/movies?api_key=${API_KEY_3}&session_id=${session_id}&language=ru-RU`
     ).then((data) => this.setState({ watchlist: data.results }));
-  };
-
-  updateUser = (user) => {
-    this.setState({
-      user,
-    });
-  };
-
-  updateSessionId = (session_id) => {
-    cookies.set("session_id", session_id, {
-      path: "/",
-      maxAge: 2592000,
-    });
-    this.setState({
-      session_id,
-    });
-  };
-
-  onLogOut = () => {
-    cookies.remove("session_id");
-    this.setState({
-      session_id: null,
-      user: null,
-      favorits: [],
-      watchlist: [],
-    });
   };
 
   getMovies = () => {
@@ -130,31 +102,24 @@ class App extends React.Component {
     this.setState({ filters: this.initialState.filters });
   };
 
-  toggleModal = () => {
-    this.setState((state) => {
-      return { showModal: !state.showModal };
-    });
-  };
-
   componentDidMount() {
     const session_id = cookies.get("session_id");
     if (session_id) {
       fetchApi(
         `${API_URL}/account?api_key=${API_KEY_3}&session_id=${session_id}`
       ).then((user) => {
-        this.updateUser(user);
-        this.updateSessionId(session_id);
+        this.props.updateAuth({ session_id, user });
         this.getFavorits(user);
         this.getWatchlist(user);
       });
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.session_id) {
-      if (this.state.user !== prevState.user) {
-        this.getFavorits(this.state.user);
-        this.getWatchlist(this.state.user);
+  componentDidUpdate(prevProps) {
+    if (this.props.session_id) {
+      if (this.props.user !== prevProps.user) {
+        this.getFavorits(this.props.user);
+        this.getWatchlist(this.props.user);
       }
     }
   }
@@ -165,25 +130,14 @@ class App extends React.Component {
       page,
       movies,
       total_pages,
-      user,
-      session_id,
       favorits,
       watchlist,
-      showModal,
       isLoading,
     } = this.state;
 
     return (
       <>
-        <Header
-          user={user}
-          session_id={session_id}
-          showModal={showModal}
-          onLogOut={this.onLogOut}
-          updateUser={this.updateUser}
-          updateSessionId={this.updateSessionId}
-          toggleModal={this.toggleModal}
-        />
+        <Header />
         <div className="container">
           <div className="row mt-4">
             <div className="col-4">
@@ -204,19 +158,16 @@ class App extends React.Component {
             </div>
             <div className="col-8">
               <MoviesContainer
-                user={user}
                 page={page}
                 favorits={favorits}
                 watchlist={watchlist}
                 filters={filters}
                 movies={movies}
-                session_id={session_id}
                 isLoading={isLoading}
                 onChangePage={this.onChangePage}
                 getMovies={this.getMovies}
                 getFavorits={this.getFavorits}
                 getWatchlist={this.getWatchlist}
-                toggleModal={this.toggleModal}
               />
             </div>
           </div>
@@ -232,6 +183,6 @@ const mapStateToProps = (state) => {
     session_id: state.authReducer.session_id,
   };
 };
-const mapDispatchToProps = {};
+const mapDispatchToProps = { updateAuth };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

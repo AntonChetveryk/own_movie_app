@@ -148,8 +148,6 @@ class App extends React.Component {
                 isLoading={isLoading}
                 onChangePage={this.onChangePage}
                 getMovies={this.getMovies}
-                getFavorits={this.getFavorits}
-                getWatchlist={this.getWatchlist}
               />
             </div>
           </div>

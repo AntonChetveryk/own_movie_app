@@ -2,8 +2,9 @@ body {
   background: #fdfdfd;
 }
 
-.invalid-feedback {
+.invalid {
   display: block;
+  color: red;
 }
 
 .border-red {

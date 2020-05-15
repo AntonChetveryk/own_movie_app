@@ -166,7 +166,7 @@ class LoginForm extends React.Component {
               onBlur={this.handleBlur}
             />
             {errors.username && (
-              <div className="invalid-feedback">{errors.username}</div>
+              <div className="invalid">{errors.username}</div>
             )}
           </div>
           <div className="form-group">
@@ -184,7 +184,7 @@ class LoginForm extends React.Component {
               onBlur={this.handleBlur}
             />
             {errors.password && (
-              <div className="invalid-feedback">{errors.password}</div>
+              <div className="invalid">{errors.password}</div>
             )}
           </div>
           <div className="form-group">
@@ -202,7 +202,7 @@ class LoginForm extends React.Component {
               onBlur={this.handleBlur}
             />
             {errors.repeatPassword && (
-              <div className="invalid-feedback">{errors.repeatPassword}</div>
+              <div className="invalid">{errors.repeatPassword}</div>
             )}
           </div>
           <button
@@ -214,7 +214,7 @@ class LoginForm extends React.Component {
             Вход
           </button>
           {errors.base && (
-            <div className="invalid-feedback text-center">{errors.base}</div>
+            <div className="invalid text-center">{errors.base}</div>
           )}
         </form>
       </div>

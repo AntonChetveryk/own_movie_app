@@ -2,16 +2,18 @@ import React from "react";
 import Bookmark from "@material-ui/icons/Bookmark";
 import BookmarkBorder from "@material-ui/icons/BookmarkBorder";
 import { fetchApi, API_KEY_3, API_URL } from "../../api/api";
+import { connect } from "react-redux";
+import { toggleModal, getWatchlist } from "../../redux/actions/authActions";
 
-export default class Watchlist extends React.Component {
+class Watchlist extends React.Component {
   state = {
     isLoading: false,
   };
 
   isWatchlist = () => {
-    const { watchlist, movie } = this.props;
+    const { watchlists, movie } = this.props;
 
-    return watchlist.findIndex((item) => item.id === movie.id) !== -1;
+    return watchlists.findIndex((item) => item.id === movie.id) !== -1;
   };
 
   onClick = () => {
@@ -40,7 +42,7 @@ export default class Watchlist extends React.Component {
         }),
       }).then((res) => {
         this.setState({ isLoading: false }, () => {
-          getWatchlist(user);
+          getWatchlist({ session_id, user });
           console.log(res);
         });
       });
@@ -67,3 +69,15 @@ export default class Watchlist extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    watchlists: state.authReducer.watchlists,
+    user: state.authReducer.user,
+    session_id: state.authReducer.session_id,
+  };
+};
+
+const mapDispatchToProps = { toggleModal, getWatchlist };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Watchlist);

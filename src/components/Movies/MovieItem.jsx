@@ -4,16 +4,7 @@ import Watchlist from "./Watchlist";
 
 export default class MovieItem extends React.Component {
   render() {
-    const {
-      movie,
-      favorits,
-      watchlist,
-      user,
-      session_id,
-      getFavorits,
-      getWatchlist,
-      toggleModal,
-    } = this.props;
+    const { movie, getFavorits, getWatchlist } = this.props;
 
     return (
       <div className="card">
@@ -31,22 +22,8 @@ export default class MovieItem extends React.Component {
         <div className="card-body">
           <h6 className="card-title">{movie.title}</h6>
           <div className="card-text">Рейтинг: {movie.vote_average}</div>
-          <Favorit
-            movie={movie}
-            favorits={favorits}
-            user={user}
-            session_id={session_id}
-            getFavorits={getFavorits}
-            toggleModal={toggleModal}
-          />
-          <Watchlist
-            movie={movie}
-            watchlist={watchlist}
-            user={user}
-            session_id={session_id}
-            getWatchlist={getWatchlist}
-            toggleModal={toggleModal}
-          />
+          <Favorit movie={movie} getFavorits={getFavorits} />
+          <Watchlist movie={movie} getWatchlist={getWatchlist} />
         </div>
       </div>
     );

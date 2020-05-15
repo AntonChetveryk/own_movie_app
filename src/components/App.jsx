@@ -5,7 +5,11 @@ import { API_URL, API_KEY_3, fetchApi } from "../api/api";
 import Header from "./Header/Header";
 import Cookies from "universal-cookie";
 import { connect } from "react-redux";
-import { updateAuth } from "../redux/actions/authActions";
+import {
+  updateAuth,
+  getFavorits,
+  getWatchlist,
+} from "../redux/actions/authActions";
 
 const cookies = new Cookies();
 
@@ -21,25 +25,9 @@ class App extends React.Component {
       },
       page: 1,
       movies: [],
-      favorits: [],
-      watchlist: [],
     };
     this.state = this.initialState;
   }
-
-  getFavorits = (user) => {
-    const { session_id } = this.props;
-    fetchApi(
-      `${API_URL}/account/${user.id}/favorite/movies?api_key=${API_KEY_3}&session_id=${session_id}&language=ru-RU`
-    ).then((data) => this.setState({ favorits: data.results }));
-  };
-
-  getWatchlist = (user) => {
-    const { session_id } = this.props;
-    fetchApi(
-      `${API_URL}/account/${user.id}/watchlist/movies?api_key=${API_KEY_3}&session_id=${session_id}&language=ru-RU`
-    ).then((data) => this.setState({ watchlist: data.results }));
-  };
 
   getMovies = () => {
     const {
@@ -104,36 +92,32 @@ class App extends React.Component {
 
   componentDidMount() {
     const session_id = cookies.get("session_id");
+    const { updateAuth, getFavorits, getWatchlist } = this.props;
+
     if (session_id) {
       fetchApi(
         `${API_URL}/account?api_key=${API_KEY_3}&session_id=${session_id}`
       ).then((user) => {
-        this.props.updateAuth({ session_id, user });
-        this.getFavorits(user);
-        this.getWatchlist(user);
+        updateAuth({ session_id, user });
+        getFavorits({ session_id, user });
+        getWatchlist({ session_id, user });
       });
     }
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.session_id) {
-      if (this.props.user !== prevProps.user) {
-        this.getFavorits(this.props.user);
-        this.getWatchlist(this.props.user);
+    const { session_id, user, getFavorits, getWatchlist } = this.props;
+
+    if (session_id) {
+      if (user !== prevProps.user) {
+        getFavorits({ session_id, user });
+        getWatchlist({ session_id, user });
       }
     }
   }
 
   render() {
-    const {
-      filters,
-      page,
-      movies,
-      total_pages,
-      favorits,
-      watchlist,
-      isLoading,
-    } = this.state;
+    const { filters, page, movies, total_pages, isLoading } = this.state;
 
     return (
       <>
@@ -159,8 +143,6 @@ class App extends React.Component {
             <div className="col-8">
               <MoviesContainer
                 page={page}
-                favorits={favorits}
-                watchlist={watchlist}
                 filters={filters}
                 movies={movies}
                 isLoading={isLoading}
@@ -183,6 +165,6 @@ const mapStateToProps = (state) => {
     session_id: state.authReducer.session_id,
   };
 };
-const mapDispatchToProps = { updateAuth };
+const mapDispatchToProps = { updateAuth, getFavorits, getWatchlist };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

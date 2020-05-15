@@ -2,8 +2,10 @@ import React from "react";
 import Star from "@material-ui/icons/Star";
 import StarBorder from "@material-ui/icons/StarBorder";
 import { fetchApi, API_KEY_3, API_URL } from "../../api/api";
+import { connect } from "react-redux";
+import { toggleModal, getFavorits } from "../../redux/actions/authActions";
 
-export default class Favorit extends React.Component {
+class Favorit extends React.Component {
   isFavorite = () => {
     const { favorits, movie } = this.props;
 
@@ -33,7 +35,7 @@ export default class Favorit extends React.Component {
           favorite: !this.isFavorite(),
         }),
       }).then((res) => {
-        getFavorits(user);
+        getFavorits({ session_id, user });
         console.log(res);
       });
     } else {
@@ -53,3 +55,15 @@ export default class Favorit extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    favorits: state.authReducer.favorits,
+    user: state.authReducer.user,
+    session_id: state.authReducer.session_id,
+  };
+};
+
+const mapDispatchToProps = { toggleModal, getFavorits };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Favorit);

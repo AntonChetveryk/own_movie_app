@@ -18,13 +18,8 @@ const MoviesList = ({
         <div key={movie.id} className="col-6 mb-4">
           <MovieItem
             movie={movie}
-            user={user}
-            session_id={session_id}
-            favorits={favorits}
-            watchlist={watchlist}
             getFavorits={getFavorits}
             getWatchlist={getWatchlist}
-            toggleModal={toggleModal}
           />
         </div>
       );

@@ -87,7 +87,7 @@ class App extends React.Component {
 
   onReset = (event) => {
     event.preventDefault();
-    this.setState({ filters: this.initialState.filters });
+    this.setState({ filters: this.initialState.filters, page: 1 });
   };
 
   componentDidMount() {
